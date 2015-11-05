@@ -1,7 +1,9 @@
 import com.google.inject.Injector;
 import com.netflix.governator.guice.LifecycleInjector;
+import com.netflix.governator.guice.LifecycleTester;
 import com.netflix.governator.lifecycle.LifecycleManager;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class LifecycleCalculatorServiceTest {
@@ -125,6 +127,51 @@ public class LifecycleCalculatorServiceTest {
         Assert.assertEquals(3.0, sum, .001);
 
         manager.close();
+    }
+
+    @Rule
+    public LifecycleTester tester = new LifecycleTester();
+
+    @Test
+    public void canAddTwoValuesLifecycleTester() throws Exception {
+        // arrange
+        tester.start();
+
+        Injector injector = tester
+                .builder()
+                .withModuleClass(CalculatorModule.class)
+                .usingBasePackages("")
+                .build()
+                .createInjector();
+
+        CalculatorService calculatorService = injector.getInstance(LifecycleCalculatorService.class);
+
+        // act
+        double sum = calculatorService.add(1.0, 1.0);
+
+        // assert
+        Assert.assertEquals(6.0, sum, .001);
+    }
+
+    @Test
+    public void canSubtractTwoValuesLifecycleTester() throws Exception {
+        // arrange
+        tester.start();
+
+        Injector injector = tester
+                .builder()
+                .withModuleClass(CalculatorModule.class)
+                .usingBasePackages("")
+                .build()
+                .createInjector();
+
+        CalculatorService calculatorService = injector.getInstance(LifecycleCalculatorService.class);
+
+        // act
+        double sum = calculatorService.subtract(2.0, 1.0);
+
+        // assert
+        Assert.assertEquals(3.0, sum, .001);
     }
 
 }
